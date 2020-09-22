@@ -19,7 +19,7 @@ namespace UserSocket
 
         public UserSocket()
         {
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//初始化服务器
+            clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);//初始化服务器
         }
 
         public void Connect(string Ip, int port, Action<string> callbackfunc, Action<Exception> errorcallbackfunc)
@@ -85,7 +85,7 @@ namespace UserSocket
             catch (Exception e) //服务器关闭
             {
                 //Console.WriteLine("服务器关闭");
-                Thread.CurrentThread.Abort();//关闭时切断进程
+                return;
             }
             ReceiveMessage();
         }

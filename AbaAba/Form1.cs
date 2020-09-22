@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MaterialSkin;
-using MaterialSkin.Controls;
 using UserSocket;
 
 namespace AbaAba
@@ -24,7 +22,7 @@ namespace AbaAba
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            client.Connect("127.0.0.1", 5566, delegate (string str) { Receive(str); }, delegate (Exception error) { });
+            client.Connect("fe80::fc86:8547:4200:f71d%6", 11111, delegate (string str) { Receive(str); }, delegate (Exception error) { });
         }
             
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
