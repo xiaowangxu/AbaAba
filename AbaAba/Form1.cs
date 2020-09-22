@@ -22,14 +22,15 @@ namespace AbaAba
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            client.Connect("fe80::fc86:8547:4200:f71d%6", 11111, delegate (string str) { Receive(str); }, delegate (Exception error) { });
+            
+            client.Connect("fe80::a4dd:9a42:d19c:e8a1%4", 11111, delegate (string str) { Receive(str); }, delegate (Exception error) { });
         }
             
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == 13 && textBox1.Text != "")
             {
-                client.Send(textBox1.Text);
+                client.Send("send",textBox1.Text);
                 richTextBox1.SelectionStart = richTextBox1.Text.Length;
                 richTextBox1.SelectionColor = Color.Red;
                 richTextBox1.AppendText(textBox1.Text + "\n");
@@ -40,6 +41,11 @@ namespace AbaAba
         private void Receive(string str)
         {
             richTextBox1.Text += str + "\n";
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            client.Send("nickname", textBox2.Text);
         }
     }
 }

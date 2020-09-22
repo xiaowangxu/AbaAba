@@ -4,19 +4,28 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace ChatRoomService
 {
+    class Revobj
+    {
+        public string command;
+        public string text;
+        public string date;
+    }
     class User
     {
         public Socket socketObj;
         public int Uid;
+        public string nickname;
         public bool exited = false;
 
         public User(Socket obj, int uid)
         {
             socketObj = obj;
             Uid = uid;
+            nickname = (socketObj.RemoteEndPoint as IPEndPoint).Address.ToString() + " at " + Uid.ToString();
         }
 
     }
@@ -73,13 +82,22 @@ namespace ChatRoomService
         private void ReceMessage(Object obj)
         {
             User user = obj as User;
-            byte[] strByte = new byte[1024 * 1024];//设定接受字符的长度
+            byte[] RevByte = new byte[1024 * 1024];//设定接受字符的长度
             string str = "";
             try
             {
-                int len = user.socketObj.Receive(strByte);//接受用户发送的内容
-                str = Encoding.Default.GetString(strByte, 0, len);
-                Broadcast(str, user);//广播给用户
+                int len = user.socketObj.Receive(RevByte);//接受用户发送的内容
+                str = Encoding.Default.GetString(RevByte, 0, len);
+                Revobj Rev = JsonConvert.DeserializeObject<Revobj>(str);
+                if (Rev.command == "send") { 
+                    Broadcast(Rev.text, user);//广播给用户
+                }
+                else if (Rev.command == "nickname")
+                {
+                    user.nickname = Rev.text;
+                }
+                
+
                 Console.WriteLine(str);
             }
             catch (Exception e)
@@ -101,7 +119,7 @@ namespace ChatRoomService
             {
                 if (user != fromUser)//将信息广播给其他用户
                 {
-                    user.socketObj.Send(Encoding.UTF8.GetBytes(IPToAddress(fromUser.socketObj) + ":\t" + userStr));
+                    user.socketObj.Send(Encoding.UTF8.GetBytes("(UID " + fromUser.Uid.ToString() + ") " + fromUser.nickname + ":  " + userStr));
                 }
             }
         }

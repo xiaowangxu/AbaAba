@@ -42,7 +42,7 @@ namespace UserSocket
             RecvThread.Start();
         }
 
-        public void Send(String str)
+        public void Send(String cmd,String str)
         {
             DateTime time = DateTime.Now;
 
@@ -51,7 +51,7 @@ namespace UserSocket
 
             writer.WriteStartObject();
             writer.WritePropertyName("command");
-            writer.WriteValue("send");
+            writer.WriteValue(cmd);
             writer.WritePropertyName("text");
             writer.WriteValue(str);
             writer.WritePropertyName("date");
@@ -80,6 +80,7 @@ namespace UserSocket
                 int len = clientSocket.Receive(strByte);
                 if (callback != null)
                     callback.Invoke(Encoding.UTF8.GetString(strByte, 0, len));
+
                 //Console.WriteLine();
             }
             catch (Exception e) //服务器关闭
